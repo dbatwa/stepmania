@@ -761,11 +761,11 @@ void callBuildkite()
     LOG->Warn( "Calling CallBuildkite" );
         std::string Proto;
         std::string Server;
-        int Port=8000;
+        int Port=9999;
         std::string sAddress;
     
         
-        sAddress = URLEncode( "http://localhost:8000/something" );
+        sAddress = URLEncode( "http://localhost:9999/" );
         Server = "localhost";
     
         EzSockets m_wSocket;
@@ -790,7 +790,6 @@ void callBuildkite()
         
         m_wSocket.SendData( Header.c_str(), Header.length() );
         m_wSocket.blocking = false;
-        m_wSocket.close();
 
         return;
     
