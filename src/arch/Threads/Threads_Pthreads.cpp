@@ -216,7 +216,7 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #endif // On MinGW clockid_t is defined in pthread.h
 namespace
 {
-	typedef int (* CONDATTR_SET_CLOCK)( pthread_condattr_t *attr, clockid_t clock_id );
+	typedef int (* CONDATTR_SET_CLOCK)( pthread_condattr_t *attr, clock_t clock_id );
 	CONDATTR_SET_CLOCK g_CondattrSetclock = nullptr;
 	bool bInitialized = false;
 
@@ -269,7 +269,7 @@ namespace
 	}
 #elif defined(MACOSX)
 	void InitMonotonic() { bInitialized = true; }
-	clockid_t GetClock() { return CLOCK_MONOTONIC; }
+	clock_t GetClock() { return 1; }
 #else
 	void InitMonotonic()
 	{
@@ -317,7 +317,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	 * (no condattr_setclock), pthread_cond_timedwait has an inherent race
 	 * condition: the system clock may change before we call it. */
 	timespec abstime;
-	if( g_CondattrSetclock != nullptr || GetClock() == CLOCK_REALTIME )
+	if( g_CondattrSetclock != nullptr || GetClock() == 0 )
 	{
 		/* If we support condattr_setclock, we'll set the condition to use
 		 * the same clock as RageTimer and can use it directly. If the

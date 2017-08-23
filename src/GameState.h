@@ -12,6 +12,7 @@
 #include "SongOptions.h"
 #include "SongPosition.h"
 #include "Preference.h"
+#include "ezsockets.h"
 
 #include <map>
 #include <deque>
