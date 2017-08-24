@@ -241,6 +241,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	m_iTapNotesHit = 0;
     callBuildkite("unblock");
     m_buildKiteKillCount = 0;
+    m_bBuildKiteKillCount = true;
 
 	GAMESTATE->SetProcessedTimingData(nullptr);
 }
@@ -615,12 +616,12 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	}
 #endif //DEBUG
 
-    if (scoreOfLastTap == TNS_Miss && m_buildKiteKillCount > 20)
+    if (scoreOfLastTap == TNS_Miss && m_buildKiteKillCount > 20 && m_bBuildKiteKillCount)
     {
         LOG->Warn( "MISSED COMPLETELY FOR OVER 20 NOTES, calling kill Build Kite");
         callBuildkite("cancel");
+        m_bBuildKiteKillCount = false;
     } else if (scoreOfLastTap != TNS_Miss) {
-
         m_buildKiteKillCount = 0;
     }
 
