@@ -23,6 +23,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 	int	m_iScoreRemainder;
 	int	m_iMaxPossiblePoints;
 	int	m_iTapNotesHit;	// number of notes judged so far, needed by scoring
+    int m_buildKiteKillCount;
 
 	int	m_iNumTapsAndHolds;
 	int	m_iMaxScoreSoFar; // for nonstop scoring

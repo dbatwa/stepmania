@@ -124,6 +124,48 @@ void ScoreKeeperNormal::Load(
 	m_iRoundTo = 1;
 }
 
+void callBuildkite(std::string action)
+{
+    LOG->Warn( "Calling Buildkite with action to %s", action );
+    std::string Proto;
+    std::string Server;
+    int Port=9999;
+    Server = "localhost";
+    std::string sAddress;
+    
+    std::string URL = "http://" + Server + ":9999/";
+    
+    sAddress = URLEncode( URL += action );
+    
+    
+    EzSockets m_wSocket;
+    m_wSocket.close();
+    m_wSocket.create();
+    
+    m_wSocket.blocking = true;
+    
+    if( !m_wSocket.connect( Server, (short) Port ) )
+    {
+        LOG->Warn( "didn't connect" );
+        return;
+    }
+    
+    //Produce HTTP header
+    
+    std::string Header="";
+    
+    Header = "GET "+sAddress+" HTTP/1.0\r\n";
+    Header+= "Host: " + Server + "\r\n";
+    Header+= "Connection: close\r\n\r\n";
+    
+    m_wSocket.SendData( Header.c_str(), Header.length() );
+    m_wSocket.blocking = false;
+    
+    return;
+    
+}
+
+
 void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
 {
 /*
@@ -197,6 +239,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iPointBonus >= 0 );
 
 	m_iTapNotesHit = 0;
+    callBuildkite("unblock");
+    m_buildKiteKillCount = 0;
 
 	GAMESTATE->SetProcessedTimingData(nullptr);
 }
@@ -279,6 +323,7 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 		}
 
 		m_iTapNotesHit++;
+        m_buildKiteKillCount++;
 
 		const int64_t N = uint64_t(m_iNumTapsAndHolds);
 		const int64_t sum = (N * (N + 1)) / 2;
@@ -569,6 +614,15 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 		return;
 	}
 #endif //DEBUG
+
+    if (scoreOfLastTap == TNS_Miss && m_buildKiteKillCount > 20)
+    {
+        LOG->Warn( "MISSED COMPLETELY FOR OVER 20 NOTES, calling kill Build Kite");
+        callBuildkite("cancel");
+    } else if (scoreOfLastTap != TNS_Miss) {
+
+        m_buildKiteKillCount = 0;
+    }
 
 	// Toasty combo
 	if(scoreOfLastTap >= m_toasty_min_tns)
