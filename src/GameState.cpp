@@ -756,49 +756,10 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 	return iNumStagesOfThisSong;
 }
 
-void callBuildkite()
-{
-    LOG->Warn( "Calling CallBuildkite" );
-        std::string Proto;
-        std::string Server;
-        int Port=9999;
-        std::string sAddress;
-    
-        
-        sAddress = URLEncode( "http://localhost:9999/" );
-        Server = "localhost";
-    
-        EzSockets m_wSocket;
-        m_wSocket.close();
-        m_wSocket.create();
-        
-        m_wSocket.blocking = true;
-        
-        if( !m_wSocket.connect( Server, (short) Port ) )
-        {
-            LOG->Warn( "didn't connect" );
-            return;
-        }
-        
-        //Produce HTTP header
-        
-        std::string Header="";
-        
-        Header = "GET "+sAddress+" HTTP/1.0\r\n";
-        Header+= "Host: " + Server + "\r\n";
-        Header+= "Connection: close\r\n\r\n";
-        
-        m_wSocket.SendData( Header.c_str(), Header.length() );
-        m_wSocket.blocking = false;
-
-        return;
-    
-}
 
 // Called by ScreenGameplay. Set the length of the current song.
 void GameState::BeginStage()
 {
-    callBuildkite();
 	if( m_bDemonstrationOrJukebox )
 		return;
 
