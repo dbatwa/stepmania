@@ -81,9 +81,8 @@ protected:
 	// This adds the element with the given cookie to the queue to be notified of state changes.
 	inline void AddElementToQueue( IOHIDElementCookie cookie )
 	{
-		IOReturn ret = CALL( m_Queue, addElement, cookie, 0 );
-		if( ret != KERN_SUCCESS )
-			LOG->Warn( "Failed to add HID element with cookie %p to queue: %u", static_cast<UInt32>(cookie), ret );
+		CALL( m_Queue, addElement, cookie, 0 );
+			
 	}
 
 	// Perform a synchronous set report on the HID interface.
