@@ -124,7 +124,6 @@ gitversion.h
 Cache/
 Save/
 Logs/
-Songs/*
 Screenshots/
 portable.ini
 Docs/doxygen
